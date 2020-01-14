@@ -1,0 +1,15 @@
+{
+  "name": "blog_app_rest_api",
+  "version": "1.0.0",
+  "description": "Bloggig app using RESTful routes, express, ejs and node",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ritesh-Dabral"
+  },
+  "author": "Ritesh Dabral",
+  "license": "ISC"
+}
