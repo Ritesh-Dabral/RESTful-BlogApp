@@ -13,11 +13,24 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="ui item" id="under">
-        <a href="/blogs">
-            <i class="arrow alternate circle left outline icon"></i>
-        </a>
+
+
+        <div class="ui item">
+            <button class="ui inverted green large button"><a href="/blogs/<%= blog._id %>/edit">
+                Edit
+            </a></button>
+            <button class="ui inverted teal large button"><a href="/blogs">
+                Back
+            </a></button>
+
+            <div class="ui item" id="del">
+                <form action="/blogs/<%= blog._id %>?_method=DELETE" method="POST" class="ui item">
+                    <button class="ui inverted red large button" type="submit" id="del_btn">
+                        Delete
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 
 

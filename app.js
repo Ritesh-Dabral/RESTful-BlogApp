@@ -1,12 +1,23 @@
 var express = require("express"),
     app = express(),
     body_parser = require("body-parser"),
+    expressSanitizer = require("express-sanitizer"),
+    methodOverride = require("method-override"),
     mongoose = require("mongoose");
 
 app.use(body_parser.urlencoded({extended:true})); //adding body-parser with express
+/*
+    sanitizer checks for client input for any embedded JS code which might affect our DB
+*/
+app.use(expressSanitizer()); // always goes after  body-parser
 app.set('view engine', 'ejs');
 app.use(express.static("public")); //serve static files such as images, CSS files, and JavaScript files
-
+/* 
+    // this package is used to treat 'PUT' 'Delete' and 'Patch' route as they
+    // are not supported by 'forms' in html
+*/
+app.use(methodOverride("_method"));
+                            
 
 /*  DATA BASE DETAILS */
 //coonecting mongoose
@@ -69,6 +80,15 @@ app.get("/blogs/new",(req,res)=>{
 
 //go to create blog  -----> CREATE ROUTE
 app.post("/blogs",(req,res)=>{
+    req.body.blog.body = req.sanitize(req.body.blog.body);
+    /*
+        //where req.body is the body we received from the client,
+        //'blog' is the object that has the title,image,body data
+        //blog.body is the actual body that we need to sanitize
+        // and finally store it back into req.body.blog.body 
+
+        USED in CREATE and UPDATE
+    */
     Blog.create(req.body.blog, function(err,db_response){
         if(err)
             console.log(err); 
@@ -81,6 +101,7 @@ app.post("/blogs",(req,res)=>{
 //go to show blog  -----> SHOW ROUTE
 
 app.get("/blogs/:id", (req,res)=>{
+    //can't get :id easily so use 'req.params.id' to get id from URL
     Blog.findById(req.params.id, function(err,db_response){
         if(err)
             res.render("unknown");
@@ -93,9 +114,40 @@ app.get("/blogs/:id", (req,res)=>{
 //go to edit blog  -----> EDIT ROUTE
 
 app.get("/blogs/:id/edit",(req,res)=>{
-    res.render("edit"); 
+    //can't get :id easily so use 'req.params.id' to get id from URL
+    Blog.findById(req.params.id, function(err,db_response){
+        if(err)
+            res.render("unknown");
+        else{
+            res.render("edit", {blog: db_response});
+        }
+    });
 });
 
+//go to update blog  -----> UPDATE ROUTE
+app.put("/blogs/:id", (req,res)=>{
+    _id = req.params.id; // id of object to be updated
+    req.body.blog.body = req.sanitize(req.body.blog.body);
+    Blog.findByIdAndUpdate(_id, req.body.blog , function(err,db_updated_res){
+        if(err)
+            res.redirect("/blogs"); //go to index page
+        else{
+            res.redirect("/blogs/" + _id); // go to show page
+        }
+    });
+});
+
+//go to update blog -----> DELETE ROUTE
+app.delete("/blogs/:id", (req,res)=>{
+    _id = req.params.id;
+    Blog.findByIdAndDelete(_id, function(err,db_deleted_res){
+        if(err)
+            res.redirect("/blogs/" + _id);
+        else{
+            res.redirect("/blogs");
+        }
+    });
+});
 
 //listen to this port
 app.listen(3000,()=>{
