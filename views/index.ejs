@@ -1,16 +1,11 @@
 <%- include('partials/header') %>
-
-<h1>INDEX PAGE</h1>
-<div>
-    <%Blogs.forEach(blog=> {%>
-        <div>
-            <h3> <%= blog.title %> </h3>
+<div class="ui conatiner" id="index">
+    <% Blogs.forEach(blog=> {%>
+            <h3><%= blog.title %></h3>
             <img src="<%= blog.image %>" alt="<%= blog.title %>">
-            <br><span><%= blog.created %></span>
-            <p><%=blog.body%></p>
-            <hr>
-        </div>
-    <% }); %>
-</div>
-
+            <br><span><%= blog.created.toDateString() %></span>
+            <p><%-blog.body.substring(0,100)%>...</p>
+            <button class="ui inverted teal medium button"><a href="/blogs/<%= blog._id %>">Read More</a></button>
+            <hr class="ui divider"></hr>
+    <% }) %>
 <%- include('partials/footer') %>

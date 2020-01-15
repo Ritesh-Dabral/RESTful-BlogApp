@@ -51,7 +51,7 @@ app.get("/",(req,res)=>{
     res.redirect("/blogs");
 });
 
-//show all blogs
+//show all blogs -----> INDEX ROUTE
 app.get("/blogs",(req,res)=>{
     Blog.find({},function(err,db_response){ //calling DB
         if(err)
@@ -62,12 +62,39 @@ app.get("/blogs",(req,res)=>{
     });
 });
 
+//go to forms blog  -----> NEW ROUTE
+app.get("/blogs/new",(req,res)=>{
+    res.render("new");
+});
+
+//go to create blog  -----> CREATE ROUTE
+app.post("/blogs",(req,res)=>{
+    Blog.create(req.body.blog, function(err,db_response){
+        if(err)
+            console.log(err); 
+        else
+            res.redirect("/"); //redirect to 'home page'
+    });
+});
 
 
+//go to show blog  -----> SHOW ROUTE
 
+app.get("/blogs/:id", (req,res)=>{
+    Blog.findById(req.params.id, function(err,db_response){
+        if(err)
+            res.render("unknown");
+        else{
+            res.render("show", {blog: db_response});
+        }
+    });
+});
 
+//go to edit blog  -----> EDIT ROUTE
 
-
+app.get("/blogs/:id/edit",(req,res)=>{
+    res.render("edit"); 
+});
 
 
 //listen to this port
