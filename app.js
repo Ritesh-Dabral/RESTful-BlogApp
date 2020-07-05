@@ -18,6 +18,8 @@ app.use(express.static("public")); //serve static files such as images, CSS file
 */
 app.use(methodOverride("_method"));
                             
+const PORT = process.env.PORT || 3000;
+const URI = "mongodb+srv://riteshD:riteshD@123@cluster0.efubm.azure.mongodb.net/myDBS?retryWrites=true&w=majority";
 
 /*  DATA BASE DETAILS */
 //coonecting mongoose
@@ -27,7 +29,7 @@ var mongo_need_obj = {
     useCreateIndex: true,
     useUnifiedTopology:true,
 }
-mongoose.connect("mongodb://127.0.0.1:27017/Blog_db",mongo_need_obj, function(err,db_response){
+mongoose.connect(URI,mongo_need_obj, function(err,db_response){
     if(err){
         console.log(err);
     }
@@ -45,15 +47,6 @@ var blog_schema = new mongoose.Schema({
 });
 
 var Blog = mongoose.model("Blog",blog_schema); //a collection with name 'Blog' or 'blogs' will be made
-
-/* test blog
-Blog.create({
-    title: "Test blog",
-    image: "http://hd.wallpaperswide.com/thumbs/winter_nature_3-t2.jpg",
-    body: "Blah blah blah",
-    //leave 'created' blank
-});
-*/
 
 /* R E S T F U L     R O U T E S  */
 
@@ -81,14 +74,6 @@ app.get("/blogs/new",(req,res)=>{
 //go to create blog  -----> CREATE ROUTE
 app.post("/blogs",(req,res)=>{
     req.body.blog.body = req.sanitize(req.body.blog.body);
-    /*
-        //where req.body is the body we received from the client,
-        //'blog' is the object that has the title,image,body data
-        //blog.body is the actual body that we need to sanitize
-        // and finally store it back into req.body.blog.body 
-
-        USED in CREATE and UPDATE
-    */
     Blog.create(req.body.blog, function(err,db_response){
         if(err)
             console.log(err); 
@@ -150,6 +135,6 @@ app.delete("/blogs/:id", (req,res)=>{
 });
 
 //listen to this port
-app.listen(3000,()=>{
+app.listen(PORT,()=>{
     console.log("S E R V E R    S T A R T E D");
 });

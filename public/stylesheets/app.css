@@ -13,3 +13,11 @@ i.icon{
 #del{
     float: right;
 }
+
+div#instructions {
+    font-size: small;
+    font-family: monospace;
+    font-style: oblique;
+    margin: 5rem;
+    padding: 2rem;
+}
